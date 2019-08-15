@@ -66,7 +66,7 @@ export default class Slider extends Vue {
   };
 
   mounted() {
-    this.handleSearch();
+    // this.handleSearch();
   }
 
   async handleSearch() {

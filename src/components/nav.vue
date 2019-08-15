@@ -27,7 +27,7 @@
             </el-menu>
           </el-col>
           <el-col v-if="userInfo.username" :span="5">
-            <div class="nav-right">
+            <div class="nav-right mt20">
               <el-dropdown @command="handleLogout">
                 <span class="el-dropdown-link">
                   {{ userInfo.nickname }}

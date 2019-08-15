@@ -178,11 +178,7 @@ export default class RegisterAndLogin extends Vue {
     if (res.status === 200) {
       if (res.data.code === 0) {
         const data: any = res.data.data;
-        const userInfo: object = {
-          nickname: data.nickname,
-          phone: data.phone,
-          username: data.username
-        };
+        const userInfo: object = data;
         this.$store.commit("SAVE_USER", {
           userInfo
         });

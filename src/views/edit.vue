@@ -34,7 +34,6 @@ export default class Edits extends Vue {
     id: ""
   };
   mounted() {
-    console.log(111);
     this.params.id = this.$route.query.id;
     this.handleSearch();
   }

@@ -5,7 +5,8 @@ export const urls: object = {
   register: "user/register",
   getUser: "getUser",
 
-  addComment: "addComment",
+  addComment: "comment/add",
+  getComments: "comment/list",
   addThirdComment: "addThirdComment",
   getCommentList: "getCommentList",
 

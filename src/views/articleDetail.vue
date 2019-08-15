@@ -10,11 +10,7 @@
           <h1 class="title">{{ articleDetail.title }}</h1>
           <div class="author">
             <div class="avatar">
-              <img
-                class="auth-logo"
-                src="../assets/userLogo.jpeg"
-                alt="BiaoChenXuYing"
-              />
+              <img class="auth-logo" src="../assets/userLogo.jpeg" alt="" />
             </div>
             <div class="info">
               <span class="name">
@@ -44,16 +40,6 @@
                 </span> -->
               </div>
             </div>
-            <!-- <div class="tags " title="标签">
-              <el-tag
-                size="mini"
-                v-for="tag in articleDetail.tags"
-                :key="tag._id"
-                class="tag"
-                type="success"
-                >{{ tag.name }}</el-tag
-              >
-            </div> -->
             <span class="clearfix" />
           </div>
         </div>
@@ -89,13 +75,10 @@
             >发 送</el-button
           >
         </div>
-        <!-- <CommentList
-          v-if="!isLoading"
-          :numbers="articleDetail.meta.comments"
+        <CommentList
+          :numbers="articleDetail.numbers"
           :list="articleDetail.comments"
-          :article_id="articleDetail._id"
-          @refreshArticle="refreshArticle"
-        /> -->
+        />
       </div>
       <div
         v-if="!isMobileOrPc"
@@ -137,28 +120,19 @@ export default class ArticleDetail extends Vue {
   total: number = 0;
   params: any = {
     id: ""
-    // type: 1 //文章类型 => 1: 普通文章，2: 简历，3: 管理员介绍
   };
   content: string = "";
   articleDetail: any = {
     toc: "",
-    _id: "",
     author: "",
     category: [],
     comments: [],
-    create_time: "",
+    createtime: "",
     desc: "",
-    id: 16,
+    id: null,
     img_url: "",
     numbers: 0,
-    keyword: [],
-    like_users: [],
-    meta: { views: 0, likes: 0, comments: 0 },
-    origin: 0,
-    state: 1,
-    tags: [],
-    title: "",
-    update_time: ""
+    title: ""
   };
   cacheTime: number = 0; // 缓存时间
   times: number = 0; // 评论次数
@@ -166,11 +140,8 @@ export default class ArticleDetail extends Vue {
 
   mounted() {
     this.params.id = this.$route.query.article_id;
-    // this.params.id = "5c8cfe5d26bb39b22d3a7aec";
-    // if (this.$route.path === "/about") {
-    //   this.params.type = 3;
-    // }
     this.handleSearch();
+    this.getComments();
   }
 
   refreshArticle() {
@@ -178,7 +149,7 @@ export default class ArticleDetail extends Vue {
   }
 
   async handleAddComment() {
-    if (!this.articleDetail._id) {
+    if (!this.articleDetail.id) {
       this.$message({
         message: "该文章不存在！",
         type: "error"
@@ -211,10 +182,12 @@ export default class ArticleDetail extends Vue {
       });
       return;
     }
-    let user_id = "";
+    let userId = "";
+    let nickname = "";
     if (window.sessionStorage.userInfo) {
       let userInfo = JSON.parse(window.sessionStorage.userInfo);
-      user_id = userInfo.username;
+      userId = userInfo.userId;
+      nickname = userInfo.nickname;
     } else {
       this.$message({
         message: "登录才能评论，请先登录！",
@@ -224,94 +197,68 @@ export default class ArticleDetail extends Vue {
     }
 
     this.btnLoading = true;
-    const res: any = await this.$https.get(this.$urls.addComment, {
-      article_id: this.articleDetail._id,
-      user_id,
-      content: this.content
+    const res: any = await this.$https.post(this.$urls.addComment, {
+      blogId: this.articleDetail.id,
+      userId,
+      comment: this.content
     });
     this.btnLoading = false;
-    if (res.status === 200) {
-      this.times++;
-      if (res.data.code === 0) {
-        this.cacheTime = nowTime;
-        this.content = "";
-        this.$message({
-          message: res.data.message,
-          type: "success"
-        });
-        this.handleSearch();
-      } else {
-        this.$message({
-          message: res.data.message,
-          type: "error"
-        });
-      }
-    } else {
-      this.times++;
+    this.times++;
+    if (res.data.code === 0) {
+      this.cacheTime = nowTime;
+      this.content = "";
+      this.getComments();
       this.$message({
-        message: "网络错误!",
+        message: "评论成功",
+        type: "success"
+      });
+    } else {
+      this.$message({
+        message: "评论失败",
         type: "error"
       });
     }
   }
-
-  beforeDestroy() {
-    document.title = "方辉的博客网站";
-    document
-      .getElementById("keywords")
-      .setAttribute("content", "方辉 的博客网站");
-    document
-      .getElementById("description")
-      .setAttribute(
-        "content",
-        "分享大前端开发等相关的技术文章，热点资源，全栈程序员的成长之路。"
-      );
-  }
-
   formatTime(value: any) {
     return timestampToTime(value, true);
   }
 
+  async getComments() {
+    const res = await this.$https.get(
+      this.$urls.getComments + "?blogId=" + this.params.id
+    );
+    if (res.data.code === 0) {
+      const count = res.data.data.count;
+      const commentList = res.data.data.commentList;
+      this.$set(this.articleDetail, "numbers", count);
+      this.$set(this.articleDetail, "comments", commentList);
+    }
+  }
   async handleSearch() {
-    this.isLoading = true;
+    // this.isLoading = true;
     const res: any = await this.$https.get(
       this.$urls.getArticleDetail + "?id=" + this.params.id
     );
-    this.isLoading = false;
-    if (res.status === 200) {
-      if (res.data.code === 0) {
-        this.articleDetail = res.data.data;
-        const article = markdown.marked(res.data.data.content);
-        // console.log("this.articleDetail :", this.articleDetail.tags);
-        article.then((res: any) => {
-          this.articleDetail.content = res.content;
-          this.articleDetail.toc = res.toc;
-          // console.log("this.articleDetail.toc :", this.articleDetail.toc);
-        });
-        // let keyword = res.data.data.keyword.join(",");
-        // let description = res.data.data.desc;
-        let title = res.data.data.title;
-        document.title = title;
-        // document.querySelector("#keywords").setAttribute("content", keyword);
-        // document
-        //   .querySelector("#description")
-        //   .setAttribute("content", description);
-      } else {
-        this.$message({
-          message: res.data.message,
-          type: "error"
-        });
-      }
+    // this.isLoading = false;
+    if (res.data.code === 0) {
+      this.articleDetail = res.data.data;
+      const article = markdown.marked(res.data.data.content);
+      article.then((res: any) => {
+        this.articleDetail.content = res.content;
+        this.articleDetail.toc = res.toc;
+      });
+      let title = res.data.data.title;
+      document.title = title;
     } else {
       this.$message({
-        message: "网络错误!",
+        message: res.data.message,
         type: "error"
       });
     }
   }
 
   async likeArticle() {
-    if (!this.articleDetail._id) {
+    if (!this.articleDetail.id) {
       this.$message({
         message: "该文章不存在！",
         type: "warning"
@@ -327,10 +274,10 @@ export default class ArticleDetail extends Vue {
       return;
     }
 
-    let user_id: any = "";
+    let userId: any = "";
     if (window.sessionStorage.userInfo) {
       let userInfo = JSON.parse(window.sessionStorage.userInfo);
-      user_id = userInfo._id;
+      userId = userInfo.id;
     } else {
       this.$message({
         message: "登录才能点赞，请先登录！",
@@ -339,11 +286,11 @@ export default class ArticleDetail extends Vue {
       return;
     }
     let params: any = {
-      id: this.articleDetail._id,
-      user_id
+      id: this.articleDetail.id,
+      userId
     };
     const res: any = await this.$https.post(this.$urls.likeArticle, params);
-    this.isLoading = false;
+    // this.isLoading = false;
     if (res.status === 200) {
       this.likeTimes++;
       if (res.data.code === 0) {

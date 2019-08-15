@@ -7,139 +7,41 @@
       <div class="item-header">
         <div class="author">
           <div class="avator">
-            <img
-              v-if="item.user.avatar.length < 10"
-              src="../assets/user.png"
-              alt="默认图片"
-            />
-            <img v-else :src="item.user.avatar" alt="" />
+            <img v-if="!item.avatar" src="../assets/user.png" alt="默认图片" />
+            <img v-else :src="item.avatar" alt="" />
           </div>
         </div>
         <div class="info">
           <div class="name">
-            {{ item.user.name }}
-            {{ item.user.type === 0 ? "(作者)" : "" }}
+            {{ item.nickname }}
           </div>
           <div class="time">
-            {{ formatTime(item.create_time) }}
+            {{ formatTime(item.createtime) }}
           </div>
         </div>
       </div>
-      <div class="comment-detail">{{ item.content }}</div>
-      <div class="item-comment">
-        <div @click="showCommentModal(item, false)" class="message">
-          <el-button size="small">回复</el-button>
-        </div>
-      </div>
-      <div v-for="e in item.other_comments" :key="e._id" class="item-other">
-        <div class="item-header">
-          <div class="author">
-            <div class="avator">
-              <img
-                v-if="e.user.avatar.length < 10"
-                src="../assets/user.png"
-                alt="默认图片"
-              />
-              <img v-else :src="e.user.avatar" alt="" />
-            </div>
-          </div>
-          <div class="info">
-            <div class="name">
-              {{ e.user.name }}
-              {{ e.user.type === 0 ? "(作者)" : "" }}
-            </div>
-            <div class="time">
-              {{ formatTime(e.create_time) }}
-            </div>
-          </div>
-        </div>
-        <div class="comment-detail">
-          {{ "@" + e.to_user.name }}
-          {{ e.to_user.type === 0 ? "(作者)" : "" }}：{{ e.content }}
-        </div>
-        <div class="item-comment">
-          <!-- {/* <a class="like">  赞
-									</a> */} -->
-          <div class="message">
-            <el-button @click="showCommentModal(item, e)" size="small"
-              >回复</el-button
-            >
-          </div>
-        </div>
-      </div>
+      <div class="comment-detail">{{ item.comment }}</div>
     </div>
-    <Comment
-      :visible="visible"
-      :to_user="to_user"
-      :comment_id="comment_id"
-      :article_id="article_id"
-      @handleOk="handleOk"
-      @cancel="handleCancel"
-    />
-    <!-- :cacheTime="cacheTime"
-             :times="times" -->
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
 import { timestampToTime } from "@/utils/utils";
-import Comment from "@/components/comment.vue";
 
-@Component({
-  components: {
-    Comment
-  }
-})
+@Component
 export default class CommentList extends Vue {
-  @Prop({ default: [] }) list!: Array<object>;
+  @Prop({ default: () => [] }) list!: Array<object>;
   @Prop({ default: 0 }) numbers!: number;
-  @Prop({ default: "" }) article_id!: string;
+  mounted() {
+    console.log(this.list);
+  }
   visible: boolean = false;
   content: any = "";
-  comment_id: any = "";
-  to_user: any = {};
-  // cacheTime: number = 0; // 缓存时间
-  // times: number = 0; // 留言次数
-
-  // // lifecycle hook
-  // mounted() {
-  //   console.log('mounted !')
-  // }
+  commentId: any = "";
+  nickname: any = {};
 
   formatTime(value: any) {
     return timestampToTime(value, true);
-  }
-
-  handleCancel() {
-    this.visible = false;
-  }
-
-  // @Emit("refreshArticle")
-  handleOk() {
-    this.visible = false;
-    this.$emit("refreshArticle");
-  }
-
-  // 添加评论
-  showCommentModal(item: any, secondItem: any) {
-    if (!window.sessionStorage.userInfo) {
-      this.$message({
-        message: "登录才能点赞，请先登录！",
-        type: "warning"
-      });
-      return false;
-    }
-    // 添加三级评论
-    if (secondItem) {
-      this.visible = true;
-      this.comment_id = item._id;
-      this.to_user = secondItem.user;
-    } else {
-      // 添加二级评论
-      this.visible = true;
-      this.comment_id = item._id;
-      this.to_user = item.user;
-    }
   }
 }
 </script>
@@ -175,7 +77,7 @@ export default class CommentList extends Vue {
     border-bottom: 1px solid #f0f0f0;
   }
   .item {
-    padding: 20px 0 30px;
+    padding: 5px 0 15px;
     border-bottom: 1px solid #f0f0f0;
     .item-header {
       position: relative;
@@ -242,7 +144,6 @@ export default class CommentList extends Vue {
         img {
           width: 100%;
           height: 100%;
-          // border: 1px solid #ddd;
           border-radius: 50%;
         }
       }
@@ -251,7 +152,8 @@ export default class CommentList extends Vue {
       display: inline-block;
       .name {
         font-size: 15px;
-        color: #333;
+        color: #666;
+        font-weight: 800;
       }
       .time {
         font-size: 12px;

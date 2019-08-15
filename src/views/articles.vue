@@ -113,15 +113,15 @@ export default class Articles extends Vue {
     // document.addEventListener("scroll", lazyload);
   }
 
-  @Watch("$route")
-  routeChange(val: Route, oldVal: Route) {
-    this.tag_name = decodeURI(getQueryStringByName("tag_name"));
-    this.params.tag_id = getQueryStringByName("tag_id");
-    this.params.category_id = getQueryStringByName("category_id");
-    this.articlesList = [];
-    this.params.pageNum = 1;
-    this.handleSearch();
-  }
+  // @Watch("$route")
+  // routeChange(val: Route, oldVal: Route) {
+  //   // this.tag_name = decodeURI(getQueryStringByName("tag_name"));
+  //   // this.params.tag_id = getQueryStringByName("tag_id");
+  //   // this.params.category_id = getQueryStringByName("category_id");
+  //   // this.articlesList = [];
+  //   // this.params.pageNum = 1;
+  //   this.handleSearch();
+  // }
 
   // method
   articleDetail(id: string) {
@@ -140,11 +140,11 @@ export default class Articles extends Vue {
       if (res.data.code === 0) {
         const data: any = res.data.data;
         this.articlesList = [...this.articlesList, ...data];
-        this.total = data.count;
-        this.params.pageNum++;
-        if (this.total === this.articlesList.length) {
-          this.isLoadEnd = true;
-        }
+        // this.total = data.count;
+        // this.params.pageNum++;
+        // if (this.total === this.articlesList.length) {
+        //   this.isLoadEnd = true;
+        // }
         this.$nextTick(() => {
           lazyload();
         });

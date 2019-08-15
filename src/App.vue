@@ -2,9 +2,7 @@
   <div id="app" class="container">
     <Nav v-if="isShowNav" />
     <div class="layout">
-      <keep-alive>
-        <router-view />
-      </keep-alive>
+      <router-view />
       <Slider v-if="isShowSlider"></Slider>
     </div>
     <ArrowUp></ArrowUp>

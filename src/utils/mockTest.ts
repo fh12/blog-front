@@ -60,7 +60,7 @@
 //             "seal|1-10": [
 //               {
 //                 id: "@natural(10, 100000)",
-//                 user_id: "@natural(10, 100000)",
+//                 userId: "@natural(10, 100000)",
 //                 name: "@string",
 //                 colour: "@string",
 //                 style: "@string"
