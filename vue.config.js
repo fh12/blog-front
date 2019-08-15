@@ -69,8 +69,7 @@ module.exports = {
       // 设置代理
       // proxy all requests starting with /api to jsonplaceholder
       "/api": {
-        target: "http://176.122.153.101:8080/",
-        // target: "http://localhost:8080",
+        target: "http://localhost:8080",
         changeOrigin: true,
         ws: true
         // pathRewrite: {
