@@ -5,65 +5,21 @@ import router from "./router";
 import store from "./store/index";
 import service from "./utils/https";
 import urls from "./utils/urls";
-import {
-  Dialog,
-  Form,
-  FormItem,
-  Input,
-  Button,
-  Message,
-  Notification,
-  Menu,
-  MenuItem,
-  Row,
-  Col,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-  Loading,
-  Timeline,
-  TimelineItem,
-  Card,
-  Tag,
-  Upload
-} from "element-ui";
-import CollapseTransition from "element-ui/lib/transitions/collapse-transition";
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
-// 按需引用 element 组件
-Vue.component(Dialog.name, Dialog);
-Vue.component(Form.name, Form);
-Vue.component(FormItem.name, FormItem);
-Vue.component(Input.name, Input);
-Vue.component(Button.name, Button);
-Vue.component(Message.name, Message);
-Vue.component(Notification.name, Notification);
-Vue.component(Menu.name, Menu);
-Vue.component(MenuItem.name, MenuItem);
-Vue.component(Row.name, Row);
-Vue.component(Col.name, Col);
-Vue.component(Dropdown.name, Dropdown);
-Vue.component(DropdownMenu.name, DropdownMenu);
-Vue.component(DropdownItem.name, DropdownItem);
-Vue.component(CollapseTransition.name, CollapseTransition);
-Vue.component(Timeline.name, Timeline);
-Vue.component(TimelineItem.name, TimelineItem);
-Vue.component(Card.name, Card);
-Vue.component(Tag.name, Tag);
-Vue.component(Upload.name, Upload);
-Vue.use(Loading.directive);
-Vue.prototype.$message = Message;
-Vue.prototype.$loading = Loading.service;
+Vue.use(ElementUI);
 
 Vue.config.productionTip = false;
 Vue.prototype.$https = service; // 其他页面在使用axios的时候直接  this.$http就可以了
 Vue.prototype.$urls = urls; // 其他页面在使用URLS的时候直接  this.$urls就可以了
 
 // 不起作用
-Component.registerHooks([
-  "beforeRouteEnter",
-  "beforeRouteLeave",
-  "beforeRouteUpdate"
-]);
+// Component.registerHooks([
+//   "beforeRouteEnter",
+//   "beforeRouteLeave",
+//   "beforeRouteUpdate"
+// ]);
 
 new Vue({
   router,

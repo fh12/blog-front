@@ -9,13 +9,15 @@
           :key="article.id"
           class="item"
         >
-          <img
-            class="wrap-img img-blur-done"
-            :data-src="article.imgurl"
-            data-has-lazy-src="false"
-            src="../assets/bg.jpg"
-            alt="文章封面"
-          />
+          <span class="wrap-img">
+            <img
+              :data-src="article.imgurl"
+              data-has-lazy-src="false"
+              src="../assets/bg.jpg"
+              alt="文章封面"
+            />
+          </span>
+
           <div class="content">
             <h4 class="title">{{ article.title }}</h4>
             <!-- <p class="abstract">{{ article.desc }}</p> -->
@@ -186,17 +188,19 @@ export default class Articles extends Vue {
       /* autoprefixer:on*/
     }
     .item > .content {
-      padding-left: 80px;
+      padding-left: 100px;
     }
 
     .item .wrap-img {
       float: left;
-      width: 66px;
+      display: block;
+      overflow: hidden;
+      width: 90px;
       height: 66px;
+      border-radius: 6px;
       img {
         width: 100%;
         height: 100%;
-        border-radius: 4px;
         border: 1px solid #f0f0f0;
       }
     }

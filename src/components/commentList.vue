@@ -32,9 +32,7 @@ import { timestampToTime } from "@/utils/utils";
 export default class CommentList extends Vue {
   @Prop({ default: () => [] }) list!: Array<object>;
   @Prop({ default: 0 }) numbers!: number;
-  mounted() {
-    console.log(this.list);
-  }
+  mounted() {}
   visible: boolean = false;
   content: any = "";
   commentId: any = "";

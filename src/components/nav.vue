@@ -186,31 +186,6 @@ export default class Nav extends Vue {
       path: "/admin",
       name: "我的"
     }
-    // {
-    //   index: "3",
-    //   path: "/archive",
-    //   name: "归档"
-    // },
-    // {
-    //   index: "4",
-    //   path: "/project",
-    //   name: "项目"
-    // },
-    // {
-    //   index: "5",
-    //   path: "/timeline",
-    //   name: "历程"
-    // },
-    // {
-    //   index: "6",
-    //   path: "/message",
-    //   name: "留言"
-    // },
-    // {
-    //   index: "7",
-    //   path: "/about",
-    //   name: "关于"
-    // }
   ];
   activeIndex: string = "1";
   enterSlideUp: boolean = false;

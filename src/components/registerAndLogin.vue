@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="登录"
+    :title="handleFlag === 'login' ? '登录' : '注册'"
     :width="isMobile ? '90%' : '50%'"
     :visible="dialogVisible"
     @close="cancel"
@@ -108,26 +108,8 @@ export default class RegisterAndLogin extends Vue {
     return this.visible;
   }
 
-  // method
-  handleOAuth() {
-    // 保存授权前的页面链接内容
-    let preventHistory: object = {
-      name: this.$route.name,
-      query: this.$route.query
-    };
-    // console.log('preventHistory :', preventHistory)
-    window.sessionStorage.preventHistory = JSON.stringify(preventHistory);
-    window.location.href = `${config.oauth_uri}?client_id=${
-      config.client_id
-    }&redirect_uri=${config.redirect_uri}`;
-  }
-
   handleOk() {
-    // const reg = new RegExp(
-    //   "^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$"
-    // ); //正则表达式
     if (!this.params.username) {
-      // Message.warning("邮箱不能为空！");
       this.$message({
         message: "用户名不能为空！",
         type: "warning"

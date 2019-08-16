@@ -1,10 +1,12 @@
 <template>
   <div class="left clearfix">
-    <div v-if="!userInfo.username" class="tac mt20">请登录后查看</div>
-    <div v-if="userInfo.username">
+    <div v-if="!userInfo" class="tac mt20">请登录后查看</div>
+    <div v-if="userInfo">
       <div style="text-align:right;padding:5px;border-bottom:1px solid #eee">
         <router-link to="/newblog">
-          <el-button type="primary" size="mini">发表博客</el-button>
+          <el-button type="primary" size="mini"
+            ><i class="el-icon-edit-outline"></i> 发表博客</el-button
+          >
         </router-link>
       </div>
       <!-- <h3 v-if="params.tag_id" class="left-title">{{ tag_name }} 相关的文章：</h3> -->
@@ -25,7 +27,7 @@
                   <el-button
                     type="danger"
                     size="mini"
-                    @click="delBlog(article.id)"
+                    @click="handleConfirm(article.id)"
                     >删除</el-button
                   >
                 </span>
@@ -63,30 +65,30 @@ import LoadEnd from "@/components/loadEnd.vue";
 import LoadingCustom from "@/components/loading.vue";
 
 // 获取可视区域的高度
-const viewHeight = window.innerHeight || document.documentElement.clientHeight;
+// const viewHeight = window.innerHeight || document.documentElement.clientHeight;
 // 用新的 throttle 包装 scroll 的回调
-const lazyload = throttle(() => {
-  // 获取所有的图片标签
-  const imgs = document.querySelectorAll("#list .item img");
-  // num 用于统计当前显示到了哪一张图片，避免每次都从第一张图片开始检查是否露出
-  let num = 0;
-  for (let i = num; i < imgs.length; i++) {
-    // 用可视区域高度减去元素顶部距离可视区域顶部的高度
-    let distance = viewHeight - imgs[i].getBoundingClientRect().top;
-    let imgItem: any = imgs[i];
-    // 如果可视区域高度大于等于元素顶部距离可视区域顶部的高度，说明元素露出
-    if (distance >= 100) {
-      // 给元素写入真实的 src，展示图片
-      let hasLaySrc = imgItem.getAttribute("data-has-lazy-src");
-      if (hasLaySrc === "false") {
-        imgItem.src = imgItem.getAttribute("data-src");
-        imgItem.setAttribute("data-has-lazy-src", "true");
-      }
-      // 前 i 张图片已经加载完毕，下次从第 i+1 张开始检查是否露出
-      num = i + 1;
-    }
-  }
-}, 1000);
+// const lazyload = throttle(() => {
+//   // 获取所有的图片标签
+//   const imgs = document.querySelectorAll("#list .item img");
+//   // num 用于统计当前显示到了哪一张图片，避免每次都从第一张图片开始检查是否露出
+//   let num = 0;
+//   for (let i = num; i < imgs.length; i++) {
+//     // 用可视区域高度减去元素顶部距离可视区域顶部的高度
+//     let distance = viewHeight - imgs[i].getBoundingClientRect().top;
+//     let imgItem: any = imgs[i];
+//     // 如果可视区域高度大于等于元素顶部距离可视区域顶部的高度，说明元素露出
+//     if (distance >= 100) {
+//       // 给元素写入真实的 src，展示图片
+//       let hasLaySrc = imgItem.getAttribute("data-has-lazy-src");
+//       if (hasLaySrc === "false") {
+//         imgItem.src = imgItem.getAttribute("data-src");
+//         imgItem.setAttribute("data-has-lazy-src", "true");
+//       }
+//       // 前 i 张图片已经加载完毕，下次从第 i+1 张开始检查是否露出
+//       num = i + 1;
+//     }
+//   }
+// }, 1000);
 
 @Component({
   components: {
@@ -99,6 +101,7 @@ export default class Admin extends Vue {
   isLoadEnd: boolean = false;
   isLoading: boolean = false;
   articlesList: Array<object> = [];
+  dialogVisible: boolean = false;
   total: number = 0;
   tag_name: string = decodeURI(getQueryStringByName("tag_name"));
   params: any = {
@@ -117,26 +120,25 @@ export default class Admin extends Vue {
     this.handleSearch();
   }
   get userInfo() {
-    let userInfo: any = {
-      username: "",
-      nickname: "",
-      phone: ""
-    };
-    if (this.$store.state.user.userInfo) {
-      userInfo = this.$store.state.user.userInfo;
-    }
-    return userInfo;
+    return this.$store.state.user.userInfo.username || false;
   }
-  @Watch("$route")
-  routeChange(val: Route, oldVal: Route) {
-    this.tag_name = decodeURI(getQueryStringByName("tag_name"));
-    this.params.tag_id = getQueryStringByName("tag_id");
-    this.params.category_id = getQueryStringByName("category_id");
-    this.articlesList = [];
-    this.params.pageNum = 1;
-    this.handleSearch();
+  // @Watch("$route")
+  // routeChange(val: Route, oldVal: Route) {
+  //   this.tag_name = decodeURI(getQueryStringByName("tag_name"));
+  //   this.params.tag_id = getQueryStringByName("tag_id");
+  //   this.params.category_id = getQueryStringByName("category_id");
+  //   this.articlesList = [];
+  //   this.params.pageNum = 1;
+  //   this.handleSearch();
+  // }
+  handleConfirm(id: string) {
+    this.$confirm("确认删除？")
+      .then(_ => {
+        this.delBlog(id);
+      })
+      .catch(_ => {});
   }
-  async delBlog(id: any) {
+  async delBlog(id: string) {
     const res: any = await this.$https.post(this.$urls.delBlog + "?id=" + id);
     this.handleSearch();
   }
@@ -154,15 +156,7 @@ export default class Admin extends Vue {
       if (res.data.code === 0) {
         const data: any = res.data.data;
         this.articlesList = [];
-        this.articlesList = [...this.articlesList, ...data];
-        this.total = data.count;
-        this.params.pageNum++;
-        if (this.total === this.articlesList.length) {
-          this.isLoadEnd = true;
-        }
-        this.$nextTick(() => {
-          lazyload();
-        });
+        this.articlesList = data;
       } else {
         this.$message({
           message: res.data.message,

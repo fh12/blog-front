@@ -242,13 +242,13 @@ export default class ArticleDetail extends Vue {
     // this.isLoading = false;
     if (res.data.code === 0) {
       this.articleDetail = res.data.data;
-      const article = markdown.marked(res.data.data.content);
-      article.then((res: any) => {
-        this.articleDetail.content = res.content;
-        this.articleDetail.toc = res.toc;
-      });
-      let title = res.data.data.title;
-      document.title = title;
+      if (this.articleDetail) {
+        const article = markdown.marked(res.data.data.content);
+        article.then((res: any) => {
+          this.articleDetail.content = res.content;
+          this.articleDetail.toc = res.toc;
+        });
+      }
     } else {
       this.$message({
         message: res.data.message,
