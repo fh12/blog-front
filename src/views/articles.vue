@@ -175,7 +175,7 @@ export default class Articles extends Vue {
     .title {
       color: #333;
       margin: 2px 0 4px;
-      font-size: 16px;
+      font-size: 15px;
       height: 46px;
       font-weight: 700;
       line-height: 1.5;

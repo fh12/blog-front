@@ -3,9 +3,10 @@ import * as types from "../types";
 const initPageState = () => {
   return {
     userInfo: {
-      _id: "",
-      name: "",
-      avator: ""
+      userId: "",
+      username: "",
+      phone: "",
+      nickname: ""
     }
   };
 };

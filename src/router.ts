@@ -21,10 +21,16 @@ export default new Router({
         import(/* webpackChunkName: "articles" */ "./views/articles.vue")
     },
     {
-      path: "/admin",
+      path: "/myblog",
       name: "admin",
       component: () =>
         import(/* webpackChunkName: "archive" */ "./views/admin.vue")
+    },
+    {
+      path: "/user",
+      name: "user",
+      component: () =>
+        import(/* webpackChunkName: "archive" */ "./views/userCenter.vue")
     },
     {
       path: "/newblog",

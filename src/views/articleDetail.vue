@@ -344,7 +344,7 @@ export default class ArticleDetail extends Vue {
     .title {
       margin: 20px 0 0;
       text-align: center;
-      font-size: 34px;
+      font-size: 22px;
       font-weight: bold;
     }
     .author {

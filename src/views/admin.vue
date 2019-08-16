@@ -120,7 +120,16 @@ export default class Admin extends Vue {
     this.handleSearch();
   }
   get userInfo() {
-    return this.$store.state.user.userInfo.username || false;
+    let userInfo: any = {
+      username: ""
+    };
+    if (this.$store.state.user.userInfo) {
+      userInfo = this.$store.state.user.userInfo;
+    }
+    if (window.sessionStorage && window.sessionStorage.getItem("userInfo")) {
+      userInfo = JSON.parse(window.sessionStorage.getItem("userInfo"));
+    }
+    return userInfo.username;
   }
   // @Watch("$route")
   // routeChange(val: Route, oldVal: Route) {

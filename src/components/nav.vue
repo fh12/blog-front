@@ -99,8 +99,8 @@
           <div @click="handleClickMenu('/articles')" class="item">
             <router-link to="/articles">文 章</router-link>
           </div>
-          <div @click="handleClickMenu('/admin')" class="item">
-            <router-link to="/admin">我 的</router-link>
+          <div @click="handleClickMenu('/user')" class="item">
+            <router-link to="/user">我 的</router-link>
           </div>
           <!-- <div @click="handleClickMenu('/archive')" class="item">
             <router-link to="/archive">归 档</router-link>
@@ -183,7 +183,7 @@ export default class Nav extends Vue {
     },
     {
       index: "3",
-      path: "/admin",
+      path: "/user",
       name: "我的"
     }
   ];
