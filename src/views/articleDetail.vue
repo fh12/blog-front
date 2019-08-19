@@ -92,6 +92,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { mapGetters } from "vuex";
 import {
   timestampToTime,
   getQueryStringByName,
@@ -107,7 +108,8 @@ declare var document: any;
   components: {
     LoadingCustom,
     CommentList
-  }
+  },
+  computed: mapGetters(["userInfo"])
 })
 export default class ArticleDetail extends Vue {
   reverse: boolean = true;

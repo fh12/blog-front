@@ -1,16 +1,12 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import * as types from "./types";
-import user from "./modules/user";
+import user from "./modules/user/user";
+import getters from "./getter"
 
 Vue.use(Vuex);
 const initPageState = () => {
-  return {
-    // user: {
-    //   username: "",
-    //   password: ""
-    // }
-  };
+  return {};
 };
 const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== "production",
@@ -18,14 +14,9 @@ const store = new Vuex.Store({
     user
   },
   state: initPageState(),
-  mutations: {
-    // [types.SET_USER](state, pageState = {}) {
-    //   for (const prop in pageState) {
-    //     state[prop] = pageState[prop];
-    //   }
-    // }
-  },
-  actions: {}
+  mutations: {},
+  actions: {},
+  getters
 });
 
 export default store;

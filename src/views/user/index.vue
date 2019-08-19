@@ -1,11 +1,26 @@
 <template>
   <div class="userCenter left clearfix">
     <div class="userInfo">
-      <el-avatar icon="el-icon-user-solid"></el-avatar>
+      <div class="fl avatar-wrap">
+        <el-avatar
+          :size="80"
+          icon="el-icon-user-solid"
+          :src="userInfo.avatar"
+        ></el-avatar>
+      </div>
+      <div class="userBox">
+        <div v-if="!userInfo.username" class="username">
+          未登录
+        </div>
+        <div v-else>
+          <div class="username">{{ userInfo.nickname }}</div>
+          <div class="phone">{{ userInfo.phone }}</div>
+        </div>
+      </div>
     </div>
-    <div class="userItem">
+    <div v-if="userInfo.username" class="userItem">
       <div class="item">
-        <router-link to="/userinfo">
+        <router-link to="/baseInfo">
           <i class="color1 el-icon-info"></i
           ><span class="itemname">个人信息</span>
           <i class="fr ico-right el-icon-arrow-right"></i>
@@ -40,16 +55,15 @@ import { Component, Vue } from "vue-property-decorator";
 @Component
 export default class userCenter extends Vue {
   get userInfo() {
-    let userInfo: any = {
-      username: ""
-    };
+    let userInfo: any = {};
     if (this.$store.state.user.userInfo) {
       userInfo = this.$store.state.user.userInfo;
     }
-    if (window.sessionStorage && window.sessionStorage.getItem("userInfo")) {
-      userInfo = JSON.parse(window.sessionStorage.getItem("userInfo"));
+    let localUserInfo = sessionStorage.getItem("USER_INFO");
+    if (localUserInfo && typeof localUserInfo === "string") {
+      userInfo = JSON.parse(localUserInfo);
     }
-    return userInfo.username;
+    return userInfo;
   }
 }
 </script>
@@ -85,5 +99,17 @@ export default class userCenter extends Vue {
 .ico-right {
   display: block;
   line-height: 50px;
+}
+.userBox {
+  padding-left: 100px;
+}
+.username {
+  font-weight: 600;
+  font-size: 18px;
+  height: 50px;
+  line-height: 50px;
+}
+.phone {
+  font-size: 14px;
 }
 </style>

@@ -15,11 +15,7 @@
           <li v-for="article in articlesList" :key="article.id" class="item">
             <div class="content">
               <h4 class="title">{{ article.title }}</h4>
-              <!-- <p class="abstract">{{ article.desc }}</p> -->
               <div class="meta">
-                <!-- <span>查看 {{ article.meta.views }}</span>
-                <span>评论 {{ article.meta.comments }}</span>
-                <span>赞 {{ article.meta.likes }}</span> -->
                 <span v-if="article.createtime" class="time fl">
                   {{ formatTime(article.createtime) }}
                 </span>
@@ -52,6 +48,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { mapGetters } from "vuex";
 import { Route } from "vue-router";
 import {
   throttle,
@@ -64,37 +61,12 @@ import {
 import LoadEnd from "@/components/loadEnd.vue";
 import LoadingCustom from "@/components/loading.vue";
 
-// 获取可视区域的高度
-// const viewHeight = window.innerHeight || document.documentElement.clientHeight;
-// 用新的 throttle 包装 scroll 的回调
-// const lazyload = throttle(() => {
-//   // 获取所有的图片标签
-//   const imgs = document.querySelectorAll("#list .item img");
-//   // num 用于统计当前显示到了哪一张图片，避免每次都从第一张图片开始检查是否露出
-//   let num = 0;
-//   for (let i = num; i < imgs.length; i++) {
-//     // 用可视区域高度减去元素顶部距离可视区域顶部的高度
-//     let distance = viewHeight - imgs[i].getBoundingClientRect().top;
-//     let imgItem: any = imgs[i];
-//     // 如果可视区域高度大于等于元素顶部距离可视区域顶部的高度，说明元素露出
-//     if (distance >= 100) {
-//       // 给元素写入真实的 src，展示图片
-//       let hasLaySrc = imgItem.getAttribute("data-has-lazy-src");
-//       if (hasLaySrc === "false") {
-//         imgItem.src = imgItem.getAttribute("data-src");
-//         imgItem.setAttribute("data-has-lazy-src", "true");
-//       }
-//       // 前 i 张图片已经加载完毕，下次从第 i+1 张开始检查是否露出
-//       num = i + 1;
-//     }
-//   }
-// }, 1000);
-
 @Component({
   components: {
     LoadEnd,
     LoadingCustom
-  }
+  },
+  computed: mapGetters(["userInfo"])
 })
 export default class Admin extends Vue {
   // initial data
@@ -119,17 +91,17 @@ export default class Admin extends Vue {
   mounted() {
     this.handleSearch();
   }
+  // TS对vuex支持不完善 暂时先这样
   get userInfo() {
-    let userInfo: any = {
-      username: ""
-    };
+    let userInfo: any = {};
     if (this.$store.state.user.userInfo) {
       userInfo = this.$store.state.user.userInfo;
     }
-    if (window.sessionStorage && window.sessionStorage.getItem("userInfo")) {
-      userInfo = JSON.parse(window.sessionStorage.getItem("userInfo"));
+    let localUserInfo = sessionStorage.getItem("USER_INFO");
+    if (localUserInfo && typeof localUserInfo === "string") {
+      userInfo = JSON.parse(localUserInfo);
     }
-    return userInfo.username;
+    return userInfo;
   }
   // @Watch("$route")
   // routeChange(val: Route, oldVal: Route) {

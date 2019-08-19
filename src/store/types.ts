@@ -1,4 +1,9 @@
 
 // 用户
-export const SAVE_USER = "SAVE_USER";
+  const types: any = {
+    SAVE_USER: "SAVE_USER",
+    LOG_OUT: "LOG_OUT"
+  }
+ 
+ export default types;
 

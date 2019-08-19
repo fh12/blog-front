@@ -30,7 +30,13 @@ export default new Router({
       path: "/user",
       name: "user",
       component: () =>
-        import(/* webpackChunkName: "archive" */ "./views/userCenter.vue")
+        import(/* webpackChunkName: "archive" */ "./views/user/index.vue")
+    },
+    {
+      path: "/baseInfo",
+      name: "baseInfo",
+      component: () =>
+        import(/* webpackChunkName: "archive" */ "./views/user/baseInfo.vue")
     },
     {
       path: "/newblog",

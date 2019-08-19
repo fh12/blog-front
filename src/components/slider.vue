@@ -1,7 +1,12 @@
 <template>
   <div class="right slider">
-    <img class="right-logo" src="../assets/userLogo.jpeg" alt="" />
-    <div class="title">灰灰</div>
+    <!-- <img class="right-logo" :src="userInfo.avatar" alt="" /> -->
+    <el-avatar
+      :size="80"
+      icon="el-icon-user-solid"
+      :src="userInfo.avatar"
+    ></el-avatar>
+    <div class="title">{{ userInfo.nickname }}</div>
     <div class="right-content">
       <!-- <div class="item">
         <div class="num">123</div>粉丝
@@ -67,6 +72,20 @@ export default class Slider extends Vue {
 
   mounted() {
     // this.handleSearch();
+  }
+  get userInfo() {
+    let userInfo: any = {};
+    if (this.$store.state.user.userInfo) {
+      userInfo = this.$store.state.user.userInfo;
+    }
+    let localUserInfo = window.sessionStorage.getItem("userInfo");
+    if (this.$store.state.user.userInfo) {
+      userInfo = this.$store.state.user.userInfo;
+    }
+    if (localUserInfo && typeof localUserInfo === "string") {
+      userInfo = JSON.parse(localUserInfo);
+    }
+    return userInfo;
   }
 
   async handleSearch() {

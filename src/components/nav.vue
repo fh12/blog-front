@@ -5,7 +5,7 @@
         <el-row :gutter="20">
           <el-col :span="3">
             <router-link to="/">
-              <img class="logo" src="../assets/logo.jpg" alt="BiaoChenXuYing" />
+              <img class="logo" src="../assets/logo.jpg" alt="" />
             </router-link>
           </el-col>
           <el-col :span="16">
@@ -203,19 +203,13 @@ export default class Nav extends Vue {
   }
 
   get userInfo() {
-    let userInfo: any = {
-      username: "",
-      nickname: "",
-      phone: ""
-    };
-    if (window.sessionStorage.userInfo) {
-      userInfo = JSON.parse(window.sessionStorage.userInfo);
-      this.$store.commit("SAVE_USER", {
-        userInfo
-      });
-    }
+    let userInfo: any = {};
     if (this.$store.state.user.userInfo) {
       userInfo = this.$store.state.user.userInfo;
+    }
+    let localUserInfo = sessionStorage.getItem("USER_INFO");
+    if (localUserInfo && typeof localUserInfo === "string") {
+      userInfo = JSON.parse(localUserInfo);
     }
     return userInfo;
   }
@@ -275,15 +269,8 @@ export default class Nav extends Vue {
     if (res.status === 200) {
       if (res.data.code === 0) {
         const data: any = res.data.data;
-        const userInfo: object = {
-          username: data.username,
-          nickname: data.nickname,
-          phone: data.phone
-        };
-        this.$store.commit("SAVE_USER", {
-          userInfo
-        });
-        window.sessionStorage.userInfo = JSON.stringify(userInfo);
+        // const userInfo: object = {};
+        this.$store.commit("SAVE_USER", data);
         this.$message({
           message: res.data.message,
           type: "success"
@@ -313,14 +300,8 @@ export default class Nav extends Vue {
   }
 
   handleLogout() {
-    window.sessionStorage.userInfo = "";
-    this.$store.commit("SAVE_USER", {
-      userInfo: {
-        username: "",
-        nickname: "",
-        phone: ""
-      }
-    });
+    // window.sessionStorage.userInfo = "";
+    this.$store.commit("LOG_OUT");
   }
 
   handleClick(value: string) {
@@ -378,8 +359,11 @@ export default class Nav extends Vue {
       a {
         display: block;
         width: 100%;
-        color: #409eff;
+        // color: #409eff;
         text-decoration-line: none;
+      }
+      a.router-link-exact-active {
+        color: #409eff;
       }
     }
   }
