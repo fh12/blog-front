@@ -4,6 +4,7 @@ export const urls: object = {
   logout: "logout",
   register: "user/register",
   getUser: "getUser",
+  updateUser: "user/updateUser",
 
   addComment: "comment/add",
   getComments: "comment/list",

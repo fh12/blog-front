@@ -7,7 +7,7 @@
       <el-form-item label="文章logo">
         <el-upload
           class="avatar-uploader"
-          action="img/"
+          action="/api/blog/upload"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
@@ -38,7 +38,8 @@ export default class Edits extends Vue {
     this.handleSearch();
   }
   handleAvatarSuccess(res: any, file: any) {
-    this.form.imgurl = URL.createObjectURL(file.raw);
+    const imgurl = res.data.imgurl;
+    this.$set(this.form, "imgurl", imgurl);
   }
   beforeAvatarUpload(file: any) {
     const isJPG = file.type === "image/jpeg";
