@@ -7,8 +7,12 @@
       <div class="item-header">
         <div class="author">
           <div class="avator">
-            <img v-if="!item.avatar" src="../assets/user.png" alt="默认图片" />
-            <img v-else :src="item.avatar" alt="" />
+            <img
+              v-if="!item.userAvatar"
+              src="../assets/user.png"
+              alt="默认图片"
+            />
+            <img v-else :src="item.userAvatar" alt="" />
           </div>
         </div>
         <div class="info">
@@ -75,7 +79,7 @@ export default class CommentList extends Vue {
     border-bottom: 1px solid #f0f0f0;
   }
   .item {
-    padding: 5px 0 15px;
+    padding: 10px 0 15px;
     border-bottom: 1px solid #f0f0f0;
     .item-header {
       position: relative;
@@ -100,18 +104,23 @@ export default class CommentList extends Vue {
         }
       }
       .info {
+        margin-left: 10px;
         display: inline-block;
         .name {
+          font-weight: bold;
           font-size: 15px;
           color: #333;
         }
         .time {
+          margin-top: 5px;
           font-size: 12px;
           color: #969696;
         }
       }
     }
     .comment-detail {
+      font-size: 13px;
+      text-indent: 2em;
       min-height: 40px;
     }
     .item-comment {

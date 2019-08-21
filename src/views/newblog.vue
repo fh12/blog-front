@@ -41,6 +41,17 @@ export default class Newblog extends Vue {
   // imageUrl: string = "";
   fileList: Array<object> = [];
   // lifecycle hook
+  get userInfo() {
+    let userInfo: any = {};
+    if (this.$store.state.user.userInfo) {
+      userInfo = this.$store.state.user.userInfo;
+    }
+    let localUserInfo = sessionStorage.getItem("USER_INFO");
+    if (localUserInfo && typeof localUserInfo === "string") {
+      userInfo = JSON.parse(localUserInfo);
+    }
+    return userInfo;
+  }
   mounted() {}
   handleAvatarSuccess(res: any) {
     const imgurl = res.data.imgurl;
@@ -64,6 +75,7 @@ export default class Newblog extends Vue {
     const res: any = await this.$https.post(this.$urls.addNew, {
       title: form.title,
       imgurl: form.imgurl,
+      authorAvatar: this.userInfo.avatar,
       content: form.content
     });
     this.$message({

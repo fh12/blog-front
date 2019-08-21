@@ -10,7 +10,13 @@
           <h1 class="title">{{ articleDetail.title }}</h1>
           <div class="author">
             <div class="avatar">
-              <img class="auth-logo" src="../assets/userLogo.jpeg" alt="" />
+              <img
+                v-if="articleDetail.authorAvatar"
+                class="auth-logo"
+                :src="articleDetail.authorAvatar"
+                alt=""
+              />
+              <i v-else class="el-icon-user-solid ico-avater"></i>
             </div>
             <div class="info">
               <span class="name">
@@ -20,7 +26,7 @@
                 props-data-classes="user-follow-button-header"
                 data-author-follow-button=""
               />
-              <div class="meta">
+              <div class="meta mt10">
                 <span class="publish-time">
                   {{
                     articleDetail.createtime
@@ -92,7 +98,6 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { mapGetters } from "vuex";
 import {
   timestampToTime,
   getQueryStringByName,
@@ -108,8 +113,7 @@ declare var document: any;
   components: {
     LoadingCustom,
     CommentList
-  },
-  computed: mapGetters(["userInfo"])
+  }
 })
 export default class ArticleDetail extends Vue {
   reverse: boolean = true;
@@ -139,7 +143,17 @@ export default class ArticleDetail extends Vue {
   cacheTime: number = 0; // 缓存时间
   times: number = 0; // 评论次数
   likeTimes: number = 0; // 点赞次数
-
+  get userInfo() {
+    let userInfo: any = {};
+    if (this.$store.state.user.userInfo) {
+      userInfo = this.$store.state.user.userInfo;
+    }
+    let localUserInfo = sessionStorage.getItem("USER_INFO");
+    if (localUserInfo && typeof localUserInfo === "string") {
+      userInfo = JSON.parse(localUserInfo);
+    }
+    return userInfo;
+  }
   mounted() {
     this.params.id = this.$route.query.article_id;
     this.handleSearch();
@@ -184,24 +198,18 @@ export default class ArticleDetail extends Vue {
       });
       return;
     }
-    let userId = "";
-    let nickname = "";
-    if (window.sessionStorage.userInfo) {
-      let userInfo = JSON.parse(window.sessionStorage.userInfo);
-      userId = userInfo.userId;
-      nickname = userInfo.nickname;
-    } else {
+    if (!this.userInfo.userId) {
       this.$message({
         message: "登录才能评论，请先登录！",
         type: "warning"
       });
       return;
     }
-
     this.btnLoading = true;
     const res: any = await this.$https.post(this.$urls.addComment, {
       blogId: this.articleDetail.id,
-      userId,
+      userId: this.userInfo.userId,
+      userAvatar: this.userInfo.avatar,
       comment: this.content
     });
     this.btnLoading = false;
@@ -382,7 +390,6 @@ export default class ArticleDetail extends Vue {
         vertical-align: middle;
       }
       .meta {
-        margin-top: 5px;
         font-size: 12px;
         color: #969696;
         span {
@@ -415,6 +422,9 @@ export default class ArticleDetail extends Vue {
   text-align: center;
   padding: 50px;
   font-size: 16px;
+}
+.ico-avater {
+  font-size: 48px;
 }
 .clearfix {
   clear: both;
