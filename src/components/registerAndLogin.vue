@@ -160,7 +160,9 @@ export default class RegisterAndLogin extends Vue {
     if (res.status === 200) {
       if (res.data.code === 0) {
         const data: any = res.data.data;
-        this.$store.commit("SAVE_USER", data);
+        if (this.handleFlag === "login") {
+          this.$store.commit("SAVE_USER", data);
+        }
         this.$message({
           message: res.data.message,
           type: "success"

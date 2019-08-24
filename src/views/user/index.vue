@@ -43,7 +43,7 @@
       <div class="item">
         <router-link to="/favor">
           <i class="color4 el-icon-star-on"></i
-          ><span class="itemname">我的收藏</span>
+          ><span class="itemname">我的点赞</span>
           <i class="fr ico-right el-icon-arrow-right"></i>
         </router-link>
       </div>

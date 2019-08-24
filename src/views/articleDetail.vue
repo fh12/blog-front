@@ -16,7 +16,12 @@
                 :src="articleDetail.authorAvatar"
                 alt=""
               />
-              <i v-else class="el-icon-user-solid ico-avater"></i>
+              <img
+                v-if="!articleDetail.authorAvatar"
+                class="auth-logo"
+                src="../assets/user.png"
+                alt=""
+              />
             </div>
             <div class="info">
               <span class="name">
@@ -57,7 +62,12 @@
           ></div>
         </div>
         <div class="heart">
-          <el-button
+          <like
+            :like="likeActive"
+            @likeClick="handleLike"
+            :count="articleDetail.likeCount"
+          ></like>
+          <!-- <el-button
             type="danger"
             size="large"
             icon="heart"
@@ -65,7 +75,7 @@
             @click="likeArticle"
           >
             点赞
-          </el-button>
+          </el-button> -->
         </div>
         <div class="comment">
           <el-input
@@ -106,17 +116,19 @@ import {
 import markdown from "@/utils/markdown";
 import LoadingCustom from "@/components/loading.vue";
 import CommentList from "@/components/commentList.vue";
+import like from "@/components/like.vue";
 
 declare var document: any;
 
 @Component({
   components: {
     LoadingCustom,
-    CommentList
+    CommentList,
+    like
   }
 })
 export default class ArticleDetail extends Vue {
-  reverse: boolean = true;
+  likeActive: boolean = false;
   btnLoading: boolean = false;
   isLoadEnd: boolean = false;
   isLoading: boolean = false;
@@ -142,7 +154,6 @@ export default class ArticleDetail extends Vue {
   };
   cacheTime: number = 0; // 缓存时间
   times: number = 0; // 评论次数
-  likeTimes: number = 0; // 点赞次数
   get userInfo() {
     let userInfo: any = {};
     if (this.$store.state.user.userInfo) {
@@ -158,6 +169,13 @@ export default class ArticleDetail extends Vue {
     this.params.id = this.$route.query.article_id;
     this.handleSearch();
     this.getComments();
+    let likeArr = [];
+    if (this.userInfo.likes) {
+      likeArr = this.userInfo.likes.split(",");
+    }
+    if (likeArr.includes(this.params.id.toString())) {
+      this.likeActive = true;
+    }
   }
 
   refreshArticle() {
@@ -267,28 +285,8 @@ export default class ArticleDetail extends Vue {
     }
   }
 
-  async likeArticle() {
-    if (!this.articleDetail.id) {
-      this.$message({
-        message: "该文章不存在！",
-        type: "warning"
-      });
-      return;
-    }
-
-    if (this.likeTimes > 0) {
-      this.$message({
-        message: "您已经点过赞了！悠着点吧！",
-        type: "warning"
-      });
-      return;
-    }
-
-    let userId: any = "";
-    if (window.sessionStorage.userInfo) {
-      let userInfo = JSON.parse(window.sessionStorage.userInfo);
-      userId = userInfo.id;
-    } else {
+  async handleLike() {
+    if (!this.userInfo) {
       this.$message({
         message: "登录才能点赞，请先登录！",
         type: "warning"
@@ -297,27 +295,22 @@ export default class ArticleDetail extends Vue {
     }
     let params: any = {
       id: this.articleDetail.id,
-      userId
+      userId: this.userInfo.userId
     };
     const res: any = await this.$https.post(this.$urls.likeArticle, params);
-    // this.isLoading = false;
-    if (res.status === 200) {
-      this.likeTimes++;
-      if (res.data.code === 0) {
-        ++this.articleDetail.meta.likes;
-        this.$message({
-          message: res.data.message,
-          type: "success"
-        });
-      } else {
-        this.$message({
-          message: res.data.message,
-          type: "error"
-        });
-      }
+    if (res.data.code === 0) {
+      // let likeArr = [];
+      // likeArr = this.userInfo.likes.split(",");
+      this.userInfo.likes =
+        this.userInfo.likes + "," + this.params.id.toString();
+      this.$store.commit("SAVE_USER", this.userInfo);
+      this.$message({
+        message: res.data.message,
+        type: "success"
+      });
     } else {
       this.$message({
-        message: "网络错误!",
+        message: res.data.message,
         type: "error"
       });
     }
@@ -378,7 +371,6 @@ export default class ArticleDetail extends Vue {
       .info {
         float: left;
         vertical-align: middle;
-        // display: inline-block;
         margin-left: 8px;
         a {
           color: #333;
@@ -399,9 +391,7 @@ export default class ArticleDetail extends Vue {
       .tags {
         float: right;
         padding-top: 15px;
-        // padding-right: 20px;
         .tag {
-          // padding: 0 10px;
           margin-left: 5px;
           border-right: 2px solid #eee;
         }
@@ -413,9 +403,13 @@ export default class ArticleDetail extends Vue {
   }
 }
 .heart {
-  height: 60px;
+  height: 40px;
+  width: 60px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  padding-top: 20px;
   text-align: center;
-  margin: 50px;
+  margin: 50px auto;
 }
 .loader {
   color: rgb(226, 44, 44);

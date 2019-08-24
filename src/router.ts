@@ -45,6 +45,12 @@ export default new Router({
         import(/* webpackChunkName: "archive" */ "./views/newblog.vue")
     },
     {
+      path: "/favor",
+      name: "favor",
+      component: () =>
+        import(/* webpackChunkName: "archive" */ "./views/user/favor.vue")
+    },
+    {
       path: "/editblog",
       name: "editblog",
       component: () =>

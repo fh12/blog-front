@@ -12,7 +12,7 @@ export const urls: object = {
   getCommentList: "getCommentList",
 
   getArticleList: "blog/list",
-  likeArticle: "likeArticle",
+  likeArticle: "user/like",
   getArticleDetail: "blog/detail",
 
   getAdmin: "blog/list?isadmin=1",
