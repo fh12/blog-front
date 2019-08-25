@@ -14,7 +14,7 @@
         </div>
         <div v-else>
           <div class="username">{{ userInfo.nickname }}</div>
-          <div class="phone">{{ userInfo.phone }}</div>
+          <div class="resume">{{ userInfo.resume || userInfo.phone }}</div>
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
       <div class="item">
         <router-link to="/favor">
           <i class="color4 el-icon-star-on"></i
-          ><span class="itemname">我的点赞</span>
+          ><span class="itemname">我的收藏</span>
           <i class="fr ico-right el-icon-arrow-right"></i>
         </router-link>
       </div>
@@ -109,7 +109,7 @@ export default class userCenter extends Vue {
   height: 50px;
   line-height: 50px;
 }
-.phone {
-  font-size: 14px;
+.resume {
+  font-size: 12px;
 }
 </style>

@@ -4,7 +4,7 @@
     <div v-if="userInfo">
       <div style="text-align:right;padding:5px;border-bottom:1px solid #eee">
         <router-link to="/newblog">
-          <el-button type="primary" size="mini"
+          <el-button type="success" size="small"
             ><i class="el-icon-edit-outline"></i> 发表博客</el-button
           >
         </router-link>

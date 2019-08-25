@@ -33,7 +33,7 @@
           autocomplete="off"
         ></el-input>
       </el-formItem>
-      <el-formItem
+      <!-- <el-formItem
         v-if="handleFlag === 'register'"
         label="手机"
         :label-width="formLabelWidth"
@@ -54,7 +54,7 @@
           placeholder="个人简介"
           autocomplete="off"
         ></el-input>
-      </el-formItem>
+      </el-formItem> -->
     </el-form>
     <div slot="footer" class="dialog-footer">
       <!-- <el-button type="success" @click="handleOAuth">github 授权登录</el-button> -->

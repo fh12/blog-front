@@ -25,7 +25,9 @@
             </div>
             <div class="info">
               <span class="name">
-                <span>{{ articleDetail.author }}</span>
+                <span>{{
+                  articleDetail.authorNickname || articleDetail.author
+                }}</span>
               </span>
               <div
                 props-data-classes="user-follow-button-header"
@@ -39,19 +41,8 @@
                       : ""
                   }}
                 </span>
-                <!-- <span class="wordage"> 字数 {{ articleDetail.numbers }} </span> -->
-                <!-- <span class="views-count">
-                  阅读 {{ articleDetail.meta.views }}
-                </span> -->
-                <!-- <span class="comments-count">
-                  评论 {{ articleDetail.meta.comments }}
-                </span>
-                <span class="likes-count">
-                  喜欢 {{ articleDetail.meta.likes }}
-                </span> -->
               </div>
             </div>
-            <span class="clearfix" />
           </div>
         </div>
         <div class="content">
@@ -62,20 +53,18 @@
           ></div>
         </div>
         <div class="heart">
-          <like
-            :like="likeActive"
-            @likeClick="handleLike"
-            :count="articleDetail.likeCount"
-          ></like>
-          <!-- <el-button
-            type="danger"
-            size="large"
-            icon="heart"
-            :loading="isLoading"
-            @click="likeArticle"
-          >
-            点赞
-          </el-button> -->
+          <div class="heart-wrap">
+            <like
+              :like="likeActive"
+              @likeClick="handleLike"
+              :count="articleDetail.likeCount"
+            ></like>
+          </div>
+          <span class="favor fr" @click="handleFavor">
+            <i
+              :class="favorActive ? 'el-icon-star-on' : 'el-icon-star-off'"
+            ></i>
+          </span>
         </div>
         <div class="comment">
           <el-input
@@ -84,11 +73,12 @@
             v-model="content"
           ></el-input>
           <el-button
-            style="margin-top: 15px"
+            class="mt15"
             type="primary"
+            size="small"
             :loading="btnLoading"
             @click="handleAddComment"
-            >发 送</el-button
+            >评 论</el-button
           >
         </div>
         <CommentList
@@ -129,6 +119,7 @@ declare var document: any;
 })
 export default class ArticleDetail extends Vue {
   likeActive: boolean = false;
+  favorActive: boolean = false;
   btnLoading: boolean = false;
   isLoadEnd: boolean = false;
   isLoading: boolean = false;
@@ -143,10 +134,8 @@ export default class ArticleDetail extends Vue {
   articleDetail: any = {
     toc: "",
     author: "",
-    category: [],
     comments: [],
     createtime: "",
-    desc: "",
     id: null,
     img_url: "",
     numbers: 0,
@@ -169,13 +158,6 @@ export default class ArticleDetail extends Vue {
     this.params.id = this.$route.query.article_id;
     this.handleSearch();
     this.getComments();
-    let likeArr = [];
-    if (this.userInfo.likes) {
-      likeArr = this.userInfo.likes.split(",");
-    }
-    if (likeArr.includes(this.params.id.toString())) {
-      this.likeActive = true;
-    }
   }
 
   refreshArticle() {
@@ -190,15 +172,6 @@ export default class ArticleDetail extends Vue {
       });
       return;
     }
-
-    if (this.times > 2) {
-      this.$message({
-        message: "您今天评论的次数已经用完，明天再来评论吧！",
-        type: "warning"
-      });
-      return;
-    }
-
     let now = new Date();
     let nowTime = now.getTime();
     if (nowTime - this.cacheTime < 4000) {
@@ -263,13 +236,21 @@ export default class ArticleDetail extends Vue {
     }
   }
   async handleSearch() {
-    // this.isLoading = true;
+    this.isLoading = true;
     const res: any = await this.$https.get(
       this.$urls.getArticleDetail + "?id=" + this.params.id
     );
-    // this.isLoading = false;
+    this.isLoading = false;
     if (res.data.code === 0) {
       this.articleDetail = res.data.data;
+      const likeArr = this.articleDetail.likes.split(",");
+      if (likeArr.includes(this.userInfo.userId.toString())) {
+        this.likeActive = true;
+      }
+      const favorArr = this.articleDetail.favor.split(",");
+      if (favorArr.includes(this.userInfo.userId.toString())) {
+        this.favorActive = true;
+      }
       if (this.articleDetail) {
         const article = markdown.marked(res.data.data.content);
         article.then((res: any) => {
@@ -299,11 +280,35 @@ export default class ArticleDetail extends Vue {
     };
     const res: any = await this.$https.post(this.$urls.likeArticle, params);
     if (res.data.code === 0) {
-      // let likeArr = [];
-      // likeArr = this.userInfo.likes.split(",");
-      this.userInfo.likes =
-        this.userInfo.likes + "," + this.params.id.toString();
-      this.$store.commit("SAVE_USER", this.userInfo);
+      this.$message({
+        message: res.data.message,
+        type: "success"
+      });
+    } else {
+      this.$message({
+        message: res.data.message,
+        type: "error"
+      });
+    }
+  }
+  async handleFavor() {
+    if (!this.userInfo) {
+      this.$message({
+        message: "登录才能收藏，请先登录！",
+        type: "warning"
+      });
+      return;
+    }
+    if (this.favorActive) {
+      return;
+    }
+    let params: any = {
+      id: this.articleDetail.id,
+      userId: this.userInfo.userId
+    };
+    const res: any = await this.$https.post(this.$urls.favorArticle, params);
+    if (res.data.code === 0) {
+      this.favorActive = true;
       this.$message({
         message: res.data.message,
         type: "success"
@@ -351,6 +356,7 @@ export default class ArticleDetail extends Vue {
       font-weight: bold;
     }
     .author {
+      height: 50px;
       position: relative;
       margin: 30px 0 40px;
       padding-left: 50px;
@@ -404,12 +410,30 @@ export default class ArticleDetail extends Vue {
 }
 .heart {
   height: 40px;
-  width: 60px;
-  border: 1px solid #ddd;
-  border-radius: 50%;
-  padding-top: 20px;
+  width: 100px;
   text-align: center;
   margin: 50px auto;
+}
+.favor {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+}
+.favor i {
+  padding-top: 2px;
+  font-size: 24px;
+  color: #ff9133;
+}
+.heart-wrap {
+  float: left;
+  height: 26px;
+  width: 26px;
+  padding-top: 6px;
+  padding-left: 6px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
 }
 .loader {
   color: rgb(226, 44, 44);

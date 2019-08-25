@@ -1,6 +1,15 @@
 <template>
   <div class="left clearfix">
-    <h3 v-if="params.tag_id" class="left-title">{{ tag_name }} 相关的文章：</h3>
+    <!-- <h3 v-if="params.tag_id" class="left-title">{{ tag_name }} 相关的文章：</h3> -->
+    <div class="mt10">
+      <el-input placeholder="输入关键字" v-model="params.keywords" size="small">
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="handleSearch"
+        ></el-button>
+      </el-input>
+    </div>
     <ul class="articles-list" id="list">
       <transition-group name="el-fade-in">
         <li
@@ -10,11 +19,11 @@
           class="item"
         >
           <span class="wrap-img">
+            <img v-if="article.imgurl !== 'null'" :src="article.imgurl" />
             <img
-              :data-src="article.imgurl"
-              data-has-lazy-src="false"
-              src="../assets/bg.jpg"
-              alt="文章封面"
+              v-if="article.imgurl == 'null'"
+              src="./../assets/logo.png"
+              alt=""
             />
           </span>
 
@@ -51,6 +60,7 @@ import {
 } from "@/utils/utils";
 import LoadEnd from "@/components/loadEnd.vue";
 import LoadingCustom from "@/components/loading.vue";
+import types from "../store/types";
 
 // 获取可视区域的高度
 const viewHeight = window.innerHeight || document.documentElement.clientHeight;
@@ -90,9 +100,9 @@ export default class Articles extends Vue {
   isLoading: boolean = false;
   articlesList: Array<object> = [];
   total: number = 0;
-  tag_name: string = decodeURI(getQueryStringByName("tag_name"));
+  // tag_name: string = decodeURI(getQueryStringByName("tag_name"));
   params: any = {
-    keyword: ""
+    keywords: ""
     // likes: "", // 是否是热门文章
     // state: 1, // 文章发布状态 => 0 草稿，1 已发布,'' 代表所有文章
     // tag_id: getQueryStringByName("tag_id"),
@@ -138,6 +148,7 @@ export default class Articles extends Vue {
       params: this.params
     });
     this.isLoading = false;
+    this.articlesList = [];
     if (res.status === 200) {
       if (res.data.code === 0) {
         const data: any = res.data.data;

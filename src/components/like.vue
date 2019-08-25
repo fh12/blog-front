@@ -7,7 +7,7 @@
         @click="handleClick"
         style="left:-20px"
       ></i>
-      <span class="ml25">{{ favorCount }}</span>
+      <span class="ml30">{{ favorCount }}</span>
     </span>
   </div>
 </template>

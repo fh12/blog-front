@@ -3,37 +3,21 @@ export const urls: object = {
   login: "user/login",
   logout: "logout",
   register: "user/register",
-  getUser: "getUser",
   updateUser: "user/updateUser",
 
   addComment: "comment/add",
   getComments: "comment/list",
-  addThirdComment: "addThirdComment",
-  getCommentList: "getCommentList",
 
   getArticleList: "blog/list",
-  likeArticle: "user/like",
+  likeArticle: "blog/like",
+  favorArticle: "blog/favor",
   getArticleDetail: "blog/detail",
+  getUserFavor: "blog/favorList",
 
   getAdmin: "blog/list?isadmin=1",
   addNew: "blog/new",
   delBlog: "blog/del",
-  updateBlog: "blog/update",
-  addMessage: "addMessage",
-  getMessageList: "getMessageList",
-  getMessageDetail: "getMessageDetail",
-
-  getLinkList: "getLinkList",
-
-  getTagList: "getTagList",
-
-  getCategoryList: "getCategoryList",
-
-  getTimeAxisList: "getTimeAxisList",
-  getTimeAxisDetail: "getTimeAxisDetail",
-
-  getProjectList: "getProjectList",
-  getProjectDetail: "getProjectDetail"
+  updateBlog: "blog/update"
 };
 
 export default urls;
