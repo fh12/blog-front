@@ -1,6 +1,6 @@
 <template>
   <div class="left clearfix">
-    <div style="text-align:right;padding:5px;border-bottom:1px solid #eee">
+    <div style="padding:5px;border-bottom:1px solid #eee">
       <router-link to="/articles">
         <el-button type="success" size="small"
           ><i class="el-icon-circle-plus-outline"></i> 收藏更多</el-button
@@ -116,14 +116,15 @@ export default class Admin extends Vue {
   padding-left: 10px;
 }
 .item > .content {
+  box-sizing: border-box;
   padding-left: 60px;
 }
 .title {
   color: #333;
   margin: 2px 0 4px;
-  font-size: 13px;
-  height: 16px;
-  width: 93%;
+  font-size: 14px;
+  height: 20px;
+  width: 90%;
   font-weight: 700;
   white-space: nowrap;
   line-height: 1.5;
@@ -139,7 +140,7 @@ export default class Admin extends Vue {
   display: block;
   overflow: hidden;
   width: 50px;
-  height: 36px;
+  height: 42px;
   border-radius: 6px;
   img {
     width: 100%;

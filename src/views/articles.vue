@@ -2,7 +2,7 @@
   <div class="left clearfix">
     <!-- <h3 v-if="params.tag_id" class="left-title">{{ tag_name }} 相关的文章：</h3> -->
     <div class="mt10">
-      <el-input placeholder="输入关键字" v-model="params.keywords" size="small">
+      <el-input placeholder="输入关键字" v-model="params.keywords">
         <el-button
           slot="append"
           icon="el-icon-search"

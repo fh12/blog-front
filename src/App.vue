@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="container">
     <Nav v-if="isShowNav" />
-    <div class="layout">
+    <div>
       <router-view />
       <Slider v-if="isShowSlider"></Slider>
     </div>

@@ -1,7 +1,7 @@
 // url的链接
 export const urls: object = {
   login: "user/login",
-  logout: "logout",
+  logout: "user/logout",
   register: "user/register",
   updateUser: "user/updateUser",
 

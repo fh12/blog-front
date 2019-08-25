@@ -139,7 +139,8 @@ export default class ArticleDetail extends Vue {
     id: null,
     img_url: "",
     numbers: 0,
-    title: ""
+    title: "",
+    likeCount: 0
   };
   cacheTime: number = 0; // 缓存时间
   times: number = 0; // 评论次数
@@ -158,10 +159,6 @@ export default class ArticleDetail extends Vue {
     this.params.id = this.$route.query.article_id;
     this.handleSearch();
     this.getComments();
-  }
-
-  refreshArticle() {
-    this.handleSearch();
   }
 
   async handleAddComment() {
@@ -233,6 +230,7 @@ export default class ArticleDetail extends Vue {
       const commentList = res.data.data.commentList;
       this.$set(this.articleDetail, "numbers", count);
       this.$set(this.articleDetail, "comments", commentList);
+      this.$forceUpdate();
     }
   }
   async handleSearch() {
@@ -244,11 +242,17 @@ export default class ArticleDetail extends Vue {
     if (res.data.code === 0) {
       this.articleDetail = res.data.data;
       const likeArr = this.articleDetail.likes.split(",");
-      if (likeArr.includes(this.userInfo.userId.toString())) {
+      if (
+        this.userInfo.userId &&
+        likeArr.includes(this.userInfo.userId.toString())
+      ) {
         this.likeActive = true;
       }
       const favorArr = this.articleDetail.favor.split(",");
-      if (favorArr.includes(this.userInfo.userId.toString())) {
+      if (
+        this.userInfo.userId &&
+        favorArr.includes(this.userInfo.userId.toString())
+      ) {
         this.favorActive = true;
       }
       if (this.articleDetail) {
@@ -280,11 +284,15 @@ export default class ArticleDetail extends Vue {
     };
     const res: any = await this.$https.post(this.$urls.likeArticle, params);
     if (res.data.code === 0) {
+      this.likeActive = true;
+      const count = this.articleDetail.likeCount;
+      this.$set(this.articleDetail, "likeCount", count + 1);
       this.$message({
         message: res.data.message,
         type: "success"
       });
     } else {
+      this.likeActive = false;
       this.$message({
         message: res.data.message,
         type: "error"
@@ -314,6 +322,7 @@ export default class ArticleDetail extends Vue {
         type: "success"
       });
     } else {
+      this.favorActive = false;
       this.$message({
         message: res.data.message,
         type: "error"

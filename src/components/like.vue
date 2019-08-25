@@ -38,10 +38,7 @@ export default class Nav extends Vue {
   handleClick() {
     if (!this.likeActive) {
       this.$emit("likeClick");
-      this.favorCount++;
-    }
-    if (!this.likeActive) {
-      this.likeActive = true;
+      // this.favorCount++;
     }
   }
 }

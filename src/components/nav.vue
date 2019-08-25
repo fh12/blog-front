@@ -196,10 +196,10 @@ export default class Nav extends Vue {
   mounted() {
     // 授权登录的，有 code 参数
     this.routeChange(this.$route, this.$route);
-    const code: string = getQueryStringByName("code");
-    if (code) {
-      this.getUser(code);
-    }
+    // const code: string = getQueryStringByName("code");
+    // if (code) {
+    //   this.getUser(code);
+    // }
   }
 
   get userInfo() {
@@ -253,54 +253,54 @@ export default class Nav extends Vue {
     }, 300);
   }
 
-  async getUser(code: any) {
-    const loading: any = this.$loading({
-      lock: true,
-      text: "Loading",
-      spinner: "el-icon-loading",
-      background: "rgba(255, 255, 255, 0.7)"
-    });
-    let res: any = await this.$https.post(
-      this.$urls.getUser,
-      { code },
-      { withCredentials: true }
-    );
-    loading.close();
-    if (res.status === 200) {
-      if (res.data.code === 0) {
-        const data: any = res.data.data;
-        // const userInfo: object = {};
-        this.$store.commit("SAVE_USER", data);
-        this.$message({
-          message: res.data.message,
-          type: "success"
-        });
-        let preventHistory = JSON.parse(window.sessionStorage.preventHistory);
-        if (preventHistory) {
-          this.$router.push({
-            path: preventHistory.name,
-            query: preventHistory.query
-          });
-        }
-        return false;
-      } else {
-        this.$message({
-          message: res.data.message,
-          type: "error"
-        });
-        return true;
-      }
-    } else {
-      this.$message({
-        message: "网络错误!",
-        type: "error"
-      });
-      return true;
-    }
-  }
+  // async getUser(code: any) {
+  //   const loading: any = this.$loading({
+  //     lock: true,
+  //     text: "Loading",
+  //     spinner: "el-icon-loading",
+  //     background: "rgba(255, 255, 255, 0.7)"
+  //   });
+  //   let res: any = await this.$https.post(
+  //     this.$urls.getUser,
+  //     { code },
+  //     { withCredentials: true }
+  //   );
+  //   loading.close();
+  //   if (res.status === 200) {
+  //     if (res.data.code === 0) {
+  //       const data: any = res.data.data;
+  //       // const userInfo: object = {};
+  //       this.$store.commit("SAVE_USER", data);
+  //       this.$message({
+  //         message: res.data.message,
+  //         type: "success"
+  //       });
+  //       let preventHistory = JSON.parse(window.sessionStorage.preventHistory);
+  //       if (preventHistory) {
+  //         this.$router.push({
+  //           path: preventHistory.name,
+  //           query: preventHistory.query
+  //         });
+  //       }
+  //       return false;
+  //     } else {
+  //       this.$message({
+  //         message: res.data.message,
+  //         type: "error"
+  //       });
+  //       return true;
+  //     }
+  //   } else {
+  //     this.$message({
+  //       message: "网络错误!",
+  //       type: "error"
+  //     });
+  //     return true;
+  //   }
+  // }
 
-  handleLogout() {
-    // window.sessionStorage.userInfo = "";
+  async handleLogout() {
+    const res = await this.$https.post(this.$urls.logout);
     this.$store.commit("LOG_OUT");
   }
 
@@ -316,8 +316,6 @@ export default class Nav extends Vue {
     this.visible = value;
   }
   handleSelect(val: string, oldVal: string) {
-    // console.log("val :", val);
-    // console.log("oldVal :", oldVal);
     this.activeIndex = val;
   }
   back() {
