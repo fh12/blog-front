@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === "development") {
 } else {
   // 生产环境下
   service = axios.create({
-    baseURL: "/api", // api的base_url
+    baseURL: "/bpi", // api的base_url
     timeout: 20000 // 请求超时时间
   });
 }
